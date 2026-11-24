@@ -1,0 +1,682 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OrbitSoftware</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root {
+  --bg:#0c0b12; --panel:#14121d; --panel2:#191624; --line:#292536;
+  --text:#f5f2fb; --muted:#9690a6; --purple:#ae87ff; --purple2:#c6aaff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:#f4f6fb;color:#26334b;min-height:100vh}
+button,input{font:inherit}
+#OrbitSoftware{min-height:100vh}
+.school-nav{height:75px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 8%;border-bottom:1px solid #e8eaf0}
+.school-logo{font-size:23px;font-weight:800;color:#354c76}.school-logo span{color:#6688c5}
+.school-nav small{color:#8993a5}
+.school-hero{max-width:1050px;margin:75px auto 45px;padding:0 25px}
+.school-hero h1{font-size:clamp(32px,5vw,49px);color:#273b60;margin-bottom:15px}
+.school-hero p{color:#78859a;font-size:16px;line-height:1.8;max-width:600px}
+.school-cards{max-width:1050px;margin:auto;padding:0 25px;display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.school-card{background:#fff;border:1px solid #e9edf4;border-radius:14px;padding:25px;min-height:145px;transition:.2s}
+.school-card:hover{transform:translateY(-3px);box-shadow:0 8px 25px #26334b0d}
+.school-icon{font-size:25px;margin-bottom:13px}.school-card h3{font-size:16px;margin-bottom:8px;color:#354c76}
+.school-card p{color:#8993a5;font-size:13px}
+.school-footer{text-align:center;padding:55px 20px;color:#a0a9b8;font-size:12px}
+
+/* ORBIT APP */
+#orbit{display:none;min-height:100vh;background:var(--bg);color:var(--text);opacity:0}
+.app-shell{min-height:100vh;display:flex}
+.sidebar{width:245px;flex:0 0 245px;background:#111019;border-right:1px solid #252231;display:flex;flex-direction:column;padding:22px 14px;transition:width .25s,flex-basis .25s;position:relative;z-index:3}
+.sidebar-top{display:flex;align-items:center;justify-content:space-between;padding:0 8px 25px}
+.brand{font-size:24px;font-weight:800;letter-spacing:3px;color:#fff;white-space:nowrap}.brand span{color:var(--purple)}
+.collapse-btn,.mobile-menu{border:1px solid var(--line);background:#1a1724;color:#cfc5df;border-radius:9px;width:36px;height:36px;cursor:pointer;display:grid;place-items:center;font-size:18px}
+.side-label{color:#696477;font-size:10px;font-weight:700;letter-spacing:2px;padding:10px 12px}
+.nav-list{display:grid;gap:6px}
+.nav-item{width:100%;border:0;background:transparent;color:#a49db2;display:flex;align-items:center;gap:13px;padding:12px;border-radius:10px;text-align:left;cursor:pointer;transition:.18s;font-size:13px;font-weight:600}
+.nav-item:hover{background:#1c1928;color:#fff}.nav-item.active{background:#2a203d;color:#d4bdff;box-shadow:inset 3px 0 var(--purple)}
+.nav-icon{width:20px;text-align:center;font-size:17px;flex:0 0 20px}
+.sidebar-bottom{margin-top:auto;border-top:1px solid #262332;padding:16px 8px 0}
+.profile-mini{display:flex;align-items:center;gap:10px;overflow:hidden}
+.avatar{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#a77bff,#60428d);display:grid;place-items:center;color:white;font-weight:800;flex:0 0 34px}
+.profile-text{min-width:0}.profile-text strong{display:block;font-size:12px;white-space:nowrap}.profile-text small{color:var(--muted);font-size:10px}
+.main-area{min-width:0;flex:1}
+.topbar{height:72px;border-bottom:1px solid #252231;background:#100f17;display:flex;align-items:center;justify-content:space-between;padding:0 30px;position:sticky;top:0;z-index:2}
+.topbar-left{display:flex;align-items:center;gap:13px}.mobile-menu{display:none}
+.page-kicker{color:#827b91;font-size:11px}.topbar-title{font-size:15px;font-weight:700}
+.topbar-right{display:flex;align-items:center;gap:12px}.status-dot{width:7px;height:7px;border-radius:50%;background:#65d69a;display:inline-block;margin-right:6px}
+.content{max-width:1350px;margin:auto;padding:34px 32px 50px}
+.page{display:none;animation:fadeIn .25s ease}.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.hero{background:radial-gradient(circle at 85% 30%,#49316b55,transparent 35%),linear-gradient(115deg,#211833,#171426 60%,#241936);border:1px solid #38284f;border-radius:18px;padding:42px;position:relative;overflow:hidden}
+.hero:after{content:"◉";position:absolute;right:7%;top:-95px;font-size:300px;color:#a77bff;opacity:.08;pointer-events:none}
+.eyebrow{color:#bd9aff;font-size:10px;font-weight:800;letter-spacing:3px;margin-bottom:14px}
+.hero h1{font-size:clamp(29px,4vw,43px);margin-bottom:12px;letter-spacing:-1.2px}
+.hero p{color:#aaa3bb;font-size:13px;line-height:1.8;max-width:460px}
+.primary-btn{margin-top:22px;border:0;background:var(--purple);color:#171020;padding:12px 18px;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer;transition:.2s}
+.primary-btn:hover{background:var(--purple2);transform:translateY(-2px)}
+.section-heading{display:flex;justify-content:space-between;align-items:center;gap:15px;margin:34px 0 17px}
+.section-heading h2{font-size:18px}.section-heading p{font-size:11px;color:var(--muted);margin-top:5px}
+#search{background:#191622;border:1px solid #302a3d;color:white;padding:10px 13px;border-radius:8px;width:210px;outline:none;font-size:12px}
+#search:focus{border-color:var(--purple)}
+.game-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,320px));gap:16px}
+.game-card{background:#15131e;border:1px solid #292534;border-radius:13px;overflow:hidden;transition:.2s}
+.game-card:hover{transform:translateY(-4px);border-color:#8060ba}
+.game-art{height:130px;display:grid;place-items:center;font-size:43px}
+.art-one{background:linear-gradient(135deg,#46345d,#25203d)}.art-two{background:linear-gradient(135deg,#344b60,#22283f)}
+.art-three{background:linear-gradient(135deg,#59402e,#30213b)}.art-four{background:linear-gradient(135deg,#34534b,#202b39)}
+.art-five{background:linear-gradient(135deg,#503d64,#29233c)}.art-six{background:linear-gradient(135deg,#59434c,#302339)}
+.art-2048{background:linear-gradient(135deg,#59452e,#30251e)}
+.art-slope{background:linear-gradient(135deg,#173f58,#101d35)}
+.game-info{padding:14px}.game-info h3{font-size:13px;margin-bottom:6px}.game-info p{color:#8d879c;font-size:10px}
+.game-tag{display:inline-block;margin-top:11px;font-size:9px;color:#c5a8ff;background:#292039;padding:5px 8px;border-radius:5px;font-weight:700;letter-spacing:.4px}
+.game-card.playable{cursor:pointer}.game-card.playable .game-tag{color:#9de7bd;background:#193326}
+.game-card.playable:hover{border-color:#65b98b}
+.player-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 14px}
+.player-actions{display:flex;gap:8px;flex-wrap:wrap}
+.player-btn{border:1px solid #393247;background:#1a1724;color:#e9e2f4;border-radius:8px;padding:10px 13px;font-size:11px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+.player-btn:hover{border-color:var(--purple);color:#d8c2ff}
+.player-frame-wrap{height:min(72vh,760px);min-height:420px;background:#050509;border:1px solid #393247;border-radius:13px;overflow:hidden;position:relative}
+.player-frame-wrap iframe{width:100%;height:100%;border:0;background:#050509}
+.player-note{font-size:11px;color:#8f899d;line-height:1.6;margin-top:12px}
+.player-error{display:none;background:#201a2b;border:1px solid #55406f;padding:14px;border-radius:9px;margin-top:12px;color:#cfc4df;font-size:12px;line-height:1.6}
+.empty-state{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:35px;text-align:center;color:var(--muted);margin-top:16px}
+.empty-state .empty-icon{font-size:30px;margin-bottom:12px}.empty-state h3{color:#eee8fa;font-size:16px;margin-bottom:8px}.empty-state p{font-size:12px;line-height:1.7}
+.no-results{display:none;color:var(--muted);padding:25px 0;font-size:13px}
+.page-heading{margin:6px 0 22px}.page-heading .eyebrow{margin-bottom:9px}.page-heading h1{font-size:29px;margin-bottom:8px}.page-heading p{font-size:12px;color:var(--muted);line-height:1.7}
+.feature-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px}
+.feature-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}.feature-card .symbol{font-size:22px;margin-bottom:12px}.feature-card h3{font-size:13px;margin-bottom:6px}.feature-card p{font-size:11px;color:var(--muted);line-height:1.6}
+.orbit-footer{border-top:1px solid #25212f;padding:22px;text-align:center;color:#696477;font-size:10px}
+.glitching{animation:glitch .55s steps(2,end)}
+@keyframes glitch{0%{transform:translateX(0);filter:none}15%{transform:translateX(-7px);filter:hue-rotate(90deg)}30%{transform:translateX(7px);filter:invert(.2)}45%{transform:translateX(-4px);filter:hue-rotate(180deg)}60%{transform:translateX(5px);filter:none}100%{transform:translateX(0);filter:none}}
+.sidebar.collapsed{width:76px;flex-basis:76px;padding-left:10px;padding-right:10px}
+.sidebar.collapsed .brand,.sidebar.collapsed .side-label,.sidebar.collapsed .nav-text,.sidebar.collapsed .profile-text{display:none}
+.sidebar.collapsed .sidebar-top{justify-content:center;padding-left:0;padding-right:0}
+.sidebar.collapsed .collapse-btn{position:absolute;right:-13px;top:70px;background:#211a2e;box-shadow:0 2px 10px #0008}
+.sidebar.collapsed .nav-item{justify-content:center;padding:13px 8px}.sidebar.collapsed .nav-icon{font-size:19px}
+.sidebar.collapsed .profile-mini{justify-content:center}
+
+/* ORBIT social */
+.social-grid{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(0,1.4fr);gap:16px;margin-top:18px}
+.social-panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px;min-width:0}
+.social-panel h3{font-size:14px;margin-bottom:12px}
+.social-form{display:flex;gap:8px;margin:10px 0 16px;flex-wrap:wrap}
+.social-input{min-width:0;flex:1;background:#100f17;border:1px solid #383247;border-radius:8px;padding:11px 12px;color:#fff;outline:none;font-size:12px}
+.social-input:focus{border-color:var(--purple)}
+.social-btn{border:1px solid #4b3b63;background:#2a203b;color:#e9dcff;border-radius:8px;padding:10px 13px;font-size:11px;font-weight:700;cursor:pointer}
+.social-btn.primary{background:var(--purple);color:#171020;border-color:var(--purple)}
+.social-btn:disabled{opacity:.5;cursor:not-allowed}
+.social-list{display:grid;gap:8px}.social-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px;background:#191622;border:1px solid #302a3d;border-radius:9px;font-size:12px}
+.social-item button{flex:0 0 auto}.social-muted{color:var(--muted);font-size:11px;line-height:1.6}
+.social-status{font-size:11px;line-height:1.6;color:#bda7e6;min-height:18px;margin:7px 0}
+.auth-box{max-width:540px;margin:20px auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+.auth-box h2{font-size:17px;margin-bottom:7px}.auth-box p{font-size:11px;color:var(--muted);line-height:1.6;margin-bottom:14px}
+.auth-box .social-input{width:100%;flex:auto;margin-bottom:8px}
+.chat-layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:12px;min-height:440px}
+.chat-friends{background:#100f17;border:1px solid #302a3d;border-radius:10px;padding:10px;overflow:auto}
+.chat-friends button{width:100%;text-align:left;margin-bottom:6px}
+.chat-window{display:flex;flex-direction:column;min-width:0;background:#100f17;border:1px solid #302a3d;border-radius:10px;padding:12px}
+.chat-messages{flex:1;min-height:280px;max-height:430px;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:5px}
+.chat-bubble{max-width:80%;align-self:flex-start;background:#272135;border:1px solid #3a304b;border-radius:12px 12px 12px 3px;padding:9px 11px;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.chat-bubble.mine{align-self:flex-end;background:#38284f;border-radius:12px 12px 3px 12px}
+.chat-bubble small{display:block;color:#b6a9c8;font-size:9px;margin-top:4px}
+.public-chat-panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px;margin-bottom:18px}
+.public-chat-panel h2{font-size:17px;margin-bottom:5px}.public-chat-log{height:300px;overflow:auto;background:#100f17;border:1px solid #302a3d;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:9px;margin:13px 0}
+.public-chat-line{font-size:12px;line-height:1.5;overflow-wrap:anywhere}.public-chat-line strong{color:#c8a9ff;margin-right:7px}.public-chat-line small{display:block;color:#827a91;font-size:9px}.public-chat-compose{display:flex;gap:8px}.public-chat-compose input{flex:1;min-width:0}
+.name-role{display:inline-flex;align-items:center;gap:5px}.role-pill{display:inline-block;padding:2px 6px;border-radius:5px;font-size:8px;font-weight:800;letter-spacing:.6px;vertical-align:middle;background:#282333;color:#aaa}.role-owner{background:#49351c;color:#ffd88a}.role-admin{background:#30234a;color:#d4b5ff}.role-moderator{background:#1d3c39;color:#9ee7d5}.user-tools{display:inline-block;position:relative;margin-left:5px;vertical-align:middle}.user-tools summary{list-style:none;cursor:pointer;color:#a99bbd;border:1px solid #3a304b;border-radius:6px;padding:0 6px;font-size:16px;line-height:19px}.user-tools summary::-webkit-details-marker{display:none}.user-tools[open]{z-index:99999}.user-tools-menu{position:fixed;left:12px;top:12px;z-index:99999;min-width:170px;max-width:calc(100vw - 24px);padding:6px;background:#211c2d;border:1px solid #514365;border-radius:8px;box-shadow:0 8px 24px #0008}.user-tools-menu button{display:block;width:100%;text-align:left;border:0;background:transparent;color:#eee7f7;padding:8px;border-radius:5px;font-size:10px;cursor:pointer}.user-tools-menu button:hover{background:#392d4b}.admin-note{font-size:10px;color:#bda7e6;margin-top:5px}.social-item .name-role{min-width:0}
+
+/* NEW GAME PLAYER STYLES */
+.game-player{background:#111019;border:1px solid #302a3d;border-radius:14px;overflow:hidden}
+.game-player-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:15px 18px;border-bottom:1px solid #302a3d}
+.game-player-top h2{font-size:15px}
+.game-player-body{padding:20px}
+.game-back{border:1px solid #393247;background:#1a1724;color:#e9e2f4;border-radius:8px;padding:9px 12px;font-size:11px;font-weight:700;cursor:pointer}
+.game-back:hover{border-color:var(--purple)}
+.game2048-wrap{max-width:480px;margin:0 auto}
+.game2048-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}
+.game2048-title{font-size:34px;font-weight:800;color:#edcfa3}
+.game2048-scores{display:flex;gap:8px}
+.game2048-score{background:#292333;border-radius:8px;padding:8px 12px;text-align:center;min-width:75px}
+.game2048-score small{display:block;color:#a99fb6;font-size:9px;font-weight:700}
+.game2048-score strong{display:block;color:#fff;font-size:17px;margin-top:3px}
+.game2048-controls{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.game2048-controls p{font-size:11px;color:#aaa1b2}
+.game2048-board{background:#574b40;border-radius:10px;padding:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;touch-action:none;user-select:none}
+.tile2048{aspect-ratio:1;background:#776e65;border-radius:6px;display:grid;place-items:center;font-size:clamp(19px,5vw,30px);font-weight:800;color:#f9f6f2}
+.tile2048[data-value="0"]{color:transparent;background:#6b6056}
+.tile2048[data-value="2"]{background:#eee4da;color:#776e65}
+.tile2048[data-value="4"]{background:#ede0c8;color:#776e65}
+.tile2048[data-value="8"]{background:#f2b179;color:white}
+.tile2048[data-value="16"]{background:#f59563;color:white}
+.tile2048[data-value="32"]{background:#f67c5f;color:white}
+.tile2048[data-value="64"]{background:#f65e3b;color:white}
+.tile2048[data-value="128"]{background:#edcf72;color:white;font-size:clamp(16px,4vw,25px)}
+.tile2048[data-value="256"]{background:#edcc61;color:white;font-size:clamp(16px,4vw,25px)}
+.tile2048[data-value="512"]{background:#edc850;color:white;font-size:clamp(16px,4vw,25px)}
+.tile2048[data-value="1024"]{background:#edc53f;color:white;font-size:clamp(13px,3.5vw,21px)}
+.tile2048[data-value="2048"]{background:#edc22e;color:white;font-size:clamp(13px,3.5vw,21px);box-shadow:0 0 20px #ffdc5680}
+.game2048-message{text-align:center;min-height:24px;color:#d4bdff;font-size:12px;margin-top:12px}
+.game2048-help{text-align:center;color:#8e8799;font-size:10px;margin-top:10px;line-height:1.7}
+.slope-wrap{max-width:900px;margin:0 auto}
+.slope-hud{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px}
+.slope-hud strong{font-size:13px}.slope-hud span{color:#8e8799;font-size:11px}
+#slopeCanvas{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#07101d;border-radius:10px;border:1px solid #26384b;touch-action:none}
+.slope-controls{text-align:center;color:#8e8799;font-size:10px;line-height:1.7;margin-top:12px}
+.slope-overlay{position:relative}
+.slope-overlay-text{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;pointer-events:none;text-shadow:0 2px 12px #000}
+.slope-overlay-text h2{font-size:clamp(25px,5vw,44px);font-weight:800;color:white}
+.slope-overlay-text p{font-size:12px;color:#c7d8e9;margin-top:9px}
+.slope-overlay-text button{pointer-events:auto;margin-top:17px;border:0;border-radius:8px;background:#61e5ae;color:#06251c;padding:12px 20px;font-size:11px;font-weight:800;cursor:pointer}
+.slope-overlay-text button:hover{background:#a0ffda}
+@media(max-width:800px){.social-grid{grid-template-columns:1fr}.chat-layout{grid-template-columns:1fr}.chat-friends{max-height:150px}}
+@media(max-width:900px){.game-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.feature-row{grid-template-columns:1fr}}
+@media(max-width:650px){
+ .sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%);width:245px;flex-basis:245px;transition:transform .25s}
+ .sidebar.mobile-open{transform:translateX(0)}
+ .sidebar.collapsed{width:245px;flex-basis:245px}.sidebar.collapsed .brand,.sidebar.collapsed .side-label,.sidebar.collapsed .nav-text,.sidebar.collapsed .profile-text{display:initial}
+ .sidebar.collapsed .sidebar-top{justify-content:space-between}.sidebar.collapsed .collapse-btn{position:static}.sidebar.collapsed .nav-item{justify-content:flex-start}
+ .mobile-menu{display:grid}.topbar{padding:0 16px}.content{padding:23px 16px 38px}.hero{padding:29px 22px}
+ .game-grid{grid-template-columns:1fr 1fr}.section-heading{align-items:flex-start;flex-direction:column}#search{width:100%}
+ .game-player-body{padding:12px}.game2048-board{gap:6px;padding:7px}.game2048-head{align-items:flex-start}.game2048-title{font-size:28px}
+}
+@media(max-width:390px){.game-grid{grid-template-columns:1fr}.topbar-right .online-text{display:none}}
+</style>
+</head>
+<body>
+<div id="OrbitSoftware">
+  <nav class="school-nav"><div class="school-logo">Orbit<span>Software</span></div><small>Free Time Games &amp; Filtered Chat For Safety</small></nav>
+  <section class="school-hero"><h1>Welcome to Orbit.</h1><p>A safe FILTERED software for free time gaming and chatting. Filtered so no bad activities happen cause yea.</p></section>
+  <section class="school-cards">
+    <div class="school-card"><div class="school-icon">📚</div><h3>How To Open Orbit</h3><p>Press ; on your keyboard twice.</p></div>
+  </section>
+  <footer class="school-footer">OrbitSoftware © 2026 · </footer>
+</div>
+
+<div id="orbit">
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top"><div class="brand">OR<span>BIT</span></div><button class="collapse-btn" id="collapseBtn" title="Collapse sidebar" aria-label="Collapse sidebar">‹</button></div>
+      <div class="side-label">WORKSPACE</div>
+      <nav class="nav-list" aria-label="Main navigation">
+        <button class="nav-item active" data-page="home"><span class="nav-icon">⌂</span><span class="nav-text">Home</span></button>
+        <button class="nav-item" data-page="games"><span class="nav-icon">🎮</span><span class="nav-text">Games</span></button>
+        <button class="nav-item" data-page="friends"><span class="nav-icon">♧</span><span class="nav-text">Friends</span></button>
+        <button class="nav-item" data-page="chat"><span class="nav-icon">▤</span><span class="nav-text">Chat</span></button>
+      </nav>
+      <div class="sidebar-bottom"><div class="profile-mini"><div class="avatar">G</div><div class="profile-text"><strong>Guest Player</strong><small>Not signed in</small></div></div></div>
+    </aside>
+
+    <div class="main-area">
+      <header class="topbar">
+        <div class="topbar-left"><button class="mobile-menu" id="mobileMenu" aria-label="Open menu">☰</button><div><div class="page-kicker">YOUR GAMING SPACE</div><div class="topbar-title" id="topbarTitle">Home</div></div></div>
+        <div class="topbar-right"><span class="online-text" style="font-size:11px;color:#9b95a9"><i class="status-dot"></i>ORBIT is ready</span></div>
+      </header>
+      <main class="content">
+        <section class="page active" id="page-home">
+          <div class="hero"><div class="eyebrow">WELCOME TO ORBIT</div><h1>ORBIT Games</h1><p>Play games, chat with friends, and just enjoy ORBIT. A project made by the goat himself.</p><button class="primary-btn" data-go="games">EXPLORE GAMES&nbsp; →</button></div>
+          <div class="section-heading"><div><h2>Explore the universe</h2><p>Your next favorite game is waiting.</p></div></div>
+          <div class="feature-row">
+            <div class="feature-card"><div class="symbol">🎮</div><h3>Game library</h3><p>Browse the games available on ORBIT and find something to play.</p></div>
+            <div class="feature-card"><div class="symbol">👥</div><h3>Friends</h3><p>Find players, send friend requests, and message your group.</p></div>
+            <div class="feature-card"><div class="symbol">💬</div><h3>Community chat</h3><p>Send private messages to accepted ORBIT friends.</p></div>
+          </div>
+        </section>
+
+        <section class="page" id="page-games">
+          <div class="page-heading"><div class="eyebrow">THE ORBIT ARCADE</div><h1>Game library</h1><p>Browse the games currently available on ORBIT.</p></div>
+          <div class="section-heading"><div><h2>Available now</h2><p>Playable games you can open on ORBIT.</p></div><input id="search" type="text" placeholder="Search games..." autocomplete="off"></div>
+          <section class="game-grid" id="gameGrid">
+            <article class="game-card playable" data-name="minecraft" tabindex="0" role="button" aria-label="Play Minecraft" onclick="openMinecraft()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openMinecraft()}"><div class="game-art art-five">⛏️</div><div class="game-info"><h3>Minecraft 26.2</h3><p>Sandbox · Survival</p><span class="game-tag">PLAY IN ORBIT</span></div></article>
+            <article class="game-card playable" data-name="2048" tabindex="0" role="button" aria-label="Play 2048" onclick="open2048()"><div class="game-art art-2048">🔢</div><div class="game-info"><h3>2048</h3><p>Puzzle · Numbers</p><span class="game-tag">PLAY IN ORBIT</span></div></article>
+            <article class="game-card playable" data-name="slope" tabindex="0" role="button" aria-label="Play Slope" onclick="openSlope()"><div class="game-art art-slope">🟢</div><div class="game-info"><h3>Slope [broken]</h3><p>Arcade · Endless runner</p><span class="game-tag">PLAY IN ORBIT</span></div></article>
+          </section>
+          <p class="no-results" id="noResults">No games found. Try another search.</p>
+        </section>
+
+        <section class="page" id="page-minecraft">
+          <div class="player-toolbar">
+            <div><div class="eyebrow" style="margin-bottom:6px">ORBIT GAME PLAYER</div><h1 style="font-size:22px">Minecraft</h1></div>
+            <div class="player-actions"><button class="player-btn" onclick="showPage('games')">← Back to games</button><button class="player-btn" onclick="fullscreenMinecraft()">⛶ Fullscreen</button><a class="player-btn" href="eaglercraft/index.html" target="_blank" rel="noopener noreferrer">Open Minecraft ↗</a></div>
+          </div>
+          <div class="player-frame-wrap" id="minecraftFrameWrap"><iframe id="minecraftFrame" title="Eaglercraft Minecraft" src="eaglercraft/index.html" allow="fullscreen; autoplay; gamepad; clipboard-read; clipboard-write" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>
+          <div class="player-error" id="minecraftFallback">If Minecraft does not load, make sure your Minecraft files are in the eaglercraft folder and try refreshing the game.</div>
+          <p class="player-note">Minecraft here is powered by Eaglercraft, an independent browser-based project and not an official Mojang or Microsoft product. Your game worlds and browser data are managed by the Eaglercraft site.</p>
+        </section>
+
+        <!-- 2048 GAME -->
+        <section class="page" id="page-2048">
+          <div class="player-toolbar">
+            <div><div class="eyebrow" style="margin-bottom:6px">ORBIT ARCADE</div><h1 style="font-size:22px">2048</h1></div>
+            <div class="player-actions"><button class="player-btn" onclick="showPage('games')">← Back to games</button><button class="player-btn" onclick="reset2048()">↻ New game</button></div>
+          </div>
+          <div class="game-player"><div class="game-player-body">
+            <div class="game2048-wrap">
+              <div class="game2048-head"><div class="game2048-title">2048</div><div class="game2048-scores"><div class="game2048-score"><small>SCORE</small><strong id="score2048">0</strong></div><div class="game2048-score"><small>BEST</small><strong id="best2048">0</strong></div></div></div>
+              <div class="game2048-controls"><p>Join the numbers. Reach 2048!</p><button class="social-btn primary" onclick="reset2048()">New game</button></div>
+              <div class="game2048-board" id="board2048" aria-label="2048 game board"></div>
+              <div class="game2048-message" id="message2048">Use your arrow keys or swipe to move.</div>
+              <div class="game2048-help">Desktop: Arrow keys or WASD · Mobile: Swipe in any direction</div>
+            </div>
+          </div></div>
+        </section>
+
+        <!-- SLOPE GAME -->
+        <section class="page" id="page-slope">
+          <div class="player-toolbar">
+            <div><div class="eyebrow" style="margin-bottom:6px">ORBIT ARCADE</div><h1 style="font-size:22px">Slope</h1></div>
+            <div class="player-actions"><button class="player-btn" onclick="showPage('games')">← Back to games</button></div>
+          </div>
+          <div class="game-player"><div class="game-player-body">
+            <div class="slope-wrap">
+              <div class="slope-hud"><strong>SLOPE <span style="color:#61e5ae">●</span></strong><span>Score: <strong id="slopeScore">0</strong> &nbsp; Best: <strong id="slopeBest">0</strong></span></div>
+              <div class="slope-overlay">
+                <canvas id="slopeCanvas" width="960" height="540"></canvas>
+                <div class="slope-overlay-text" id="slopeOverlay"><h2 id="slopeOverlayTitle">SLOPE</h2><p id="slopeOverlayDescription">Avoid the red obstacles. Don't fall off!</p><button id="slopeStartButton" onclick="startSlope()">PLAY NOW</button></div>
+              </div>
+              <div class="slope-controls">A / D or ← / → to steer · On mobile, touch the left or right side of the game</div>
+            </div>
+          </div></div>
+        </section>
+
+        <section class="page" id="page-friends">
+          <div class="page-heading"><div class="eyebrow">THE WHISPERING ROOM</div><h1>Friends</h1><p>Find players, manage requests, and make your orbit group.</p></div>
+          <div id="socialAuthFriends" class="auth-box"><h2>Sign in to ORBIT</h2><p>Create an account or sign in to use friends and chat.</p><input class="social-input" id="authUsername" type="text" placeholder="Username (3–20 letters, numbers, underscores)" maxlength="20" autocomplete="username"><input class="social-input" id="authPassword" type="password" placeholder="Password (at least 6 characters)" autocomplete="current-password"><div class="social-form"><button class="social-btn primary" id="signInBtn">Sign in</button><button class="social-btn" id="signUpBtn">Create account</button></div><div class="social-status" id="authStatus" role="status"></div></div>
+          <div id="friendsApp" style="display:none"><div style="display:flex;justify-content:flex-end;margin:0 0 12px"><button class="social-btn" id="signOutBtn">Sign out</button></div><div class="social-grid"><div class="social-panel"><h3>🔎 Find players</h3><form class="social-form" id="friendSearchForm"><input class="social-input" id="friendSearchInput" placeholder="Search exact username" maxlength="20"><button class="social-btn primary">Search</button></form><div class="social-status" id="friendSearchStatus"></div><div class="social-list" id="friendSearchResults"></div></div><div class="social-panel"><h3>👥 Your friends</h3><div class="social-list" id="friendList"></div><h3 style="margin-top:22px">📨 Friend requests</h3><div class="social-list" id="requestList"></div></div></div></div>
+        </section>
+
+        <section class="page" id="page-chat">
+          <div class="page-heading"><div class="eyebrow">HANG OUT</div><h1>Chat</h1><p>Talk with the whole ORBIT community or send a private message to a friend.</p></div>
+          <div id="chatSignInNotice" class="empty-state"><div class="empty-icon">💬</div><h3>Sign in to start chatting</h3><p>Open Friends and sign in to your ORBIT account first.</p><button class="social-btn primary" style="margin-top:14px" onclick="showPage('friends')">Go to Friends</button></div>
+          <div id="chatApp" style="display:none">
+            <section class="public-chat-panel"><h2>🌎 Global public chat</h2><p class="social-muted">Everyone signed in can join. Messages are checked by ORBIT moderation before they are published. Be respectful and never share personal information.</p><div class="public-chat-log" id="publicChatLog" aria-live="polite"><div class="social-muted">Loading community messages...</div></div><form class="public-chat-compose" id="publicChatForm"><input class="social-input" id="publicChatInput" placeholder="Message everyone..." maxlength="300" autocomplete="off"><button class="social-btn primary" id="publicChatSend">Send</button></form><div class="social-status" id="publicChatStatus">Messages are public to all ORBIT users.</div></section>
+            <div class="page-heading"><h2 style="font-size:17px">Private messages</h2><p>Only you and an accepted friend can see these.</p></div>
+            <div class="chat-layout"><div class="chat-friends"><div class="social-muted" style="padding:4px 5px 10px">YOUR FRIENDS</div><div id="chatFriendList"></div></div><div class="chat-window"><div id="chatHeading" class="social-muted" style="padding:4px 5px 10px">Choose a friend to message</div><div class="chat-messages" id="chatMessages"></div><form class="social-form" id="sendMessageForm" style="margin-bottom:0"><input class="social-input" id="messageInput" placeholder="Write a message..." maxlength="2000" autocomplete="off" disabled><button class="social-btn primary" id="sendMessageBtn" disabled>Send</button></form><div class="social-status" id="chatStatus"></div></div></div>
+          </div>
+        </section>
+      </main>
+      <footer class="orbit-footer">ORBIT © 2026 · YOUR UNIVERSE OF GAMES.</footer>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://bjxtjoeklwxyqpxjeqrs.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_kE9M_eSmgeN29evpD7RWQA_7a7tMgNg";
+const orbitSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+let orbitUser = null, activeChatFriend = null, chatSubscription = null, publicChatSubscription = null;
+let currentRole = 'member';
+const identityCache = new Map();
+const $ = id => document.getElementById(id);
+function socialStatus(id,msg){const el=$(id);if(el)el.textContent=msg||'';}
+function safeText(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function roleLabel(role){return ({owner:'OWNER',admin:'ADMIN',moderator:'MOD',member:'MEMBER'})[role]||'MEMBER';}
+function identityMarkup(identity){const role=['owner','admin','moderator','member'].includes(identity.role)?identity.role:'member';return `<span class="name-role"><span>@${safeText(identity.username||'Player')}</span><span class="role-pill role-${role}">${roleLabel(role)}</span></span>`;}
+function canModerate(){return currentRole==='owner'||currentRole==='admin';}
+function userToolsHtml(userId,username,includeDelete=false,messageId=''){
+  if(!orbitUser||(!canModerate()&&currentRole!=='owner'))return '';
+  const roleActions=currentRole==='owner'?`<button onclick="setMemberRole('${safeText(userId)}','admin')">Promote to admin</button><button onclick="setMemberRole('${safeText(userId)}','member')">Set as member</button>`:'';
+  const deleteAction=includeDelete&&canModerate()?`<button onclick="deleteGlobalMessage('${safeText(messageId)}')">Delete message</button>`:'';
+  if(!roleActions&&!deleteAction)return '';
+  return `<details class="user-tools"><summary aria-label="User actions">⋯</summary><div class="user-tools-menu">${roleActions}${deleteAction}</div></details>`;
+}
+async function getIdentity(userId){
+  if(!userId)return {username:'Player',role:'member'};
+  if(identityCache.has(userId))return identityCache.get(userId);
+  const [p,r]=await Promise.all([
+    orbitSupabase.from('profiles').select('username').eq('id',userId).maybeSingle(),
+    orbitSupabase.from('user_roles').select('role').eq('user_id',userId).maybeSingle()
+  ]);
+  if(p.error)console.warn('ORBIT profile lookup:',p.error.message);
+  if(r.error)console.warn('ORBIT role lookup:',r.error.message);
+  const identity={username:p.data?.username||'Player',role:r.data?.role||'member'};
+  identityCache.set(userId,identity);return identity;
+}
+async function setMemberRole(userId,role){
+  if(currentRole!=='owner')return alert('Only the ORBIT owner can change roles.');
+  if(userId===orbitUser.id)return alert('You cannot change your own owner role.');
+  const action=role==='admin'?'promote this member to administrator':'change this administrator to a member';
+  if(!confirm(`Are you sure you want to ${action}?`))return;
+  const {error}=await orbitSupabase.rpc('orbit_set_user_role',{target_user_id:userId,new_role:role});
+  if(error){alert('Role change failed: '+error.message);return;}
+  identityCache.delete(userId);await refreshSocial();alert('User role updated.');
+}
+async function deleteGlobalMessage(messageId){
+  if(!canModerate())return alert('You do not have permission to delete messages.');
+  if(!confirm('Delete this public chat message for everyone?'))return;
+  const {error}=await orbitSupabase.rpc('orbit_delete_global_message',{target_message_id:messageId});
+  if(error){alert('Could not delete message: '+error.message);return;}
+  const item=document.querySelector(`[data-message-id="${CSS.escape(messageId)}"]`);if(item)item.remove();
+}
+async function deletePrivateMessage(messageId){
+  if(!canModerate())return alert('You do not have permission to delete messages.');
+  if(!confirm('Delete this private message for both users?'))return;
+  const {error}=await orbitSupabase.rpc('orbit_delete_private_message',{target_message_id:messageId});
+  if(error){alert('Could not delete message: '+error.message);return;}
+  const item=document.querySelector(`[data-private-message-id="${CSS.escape(messageId)}"]`);if(item)item.remove();
+}
+async function refreshSocial(){
+  const {data:{user}}=await orbitSupabase.auth.getUser();orbitUser=user;identityCache.clear();currentRole='member';
+  $('socialAuthFriends').style.display=user?'none':'block';$('friendsApp').style.display=user?'block':'none';$('chatSignInNotice').style.display=user?'none':'block';$('chatApp').style.display=user?'grid':'none';
+  const mini=document.querySelector('.profile-mini');
+  if(user){const identity=await getIdentity(user.id);currentRole=identity.role;mini.querySelector('strong').innerHTML=identityMarkup(identity);mini.querySelector('small').textContent='Signed in';mini.querySelector('.avatar').textContent=(identity.username||'P')[0].toUpperCase();await loadFriends();await loadGlobalChat();}
+  else{if(publicChatSubscription){orbitSupabase.removeChannel(publicChatSubscription);publicChatSubscription=null;}if(chatSubscription){orbitSupabase.removeChannel(chatSubscription);chatSubscription=null;}mini.querySelector('strong').textContent='Guest Player';mini.querySelector('small').textContent='Not signed in';mini.querySelector('.avatar').textContent='G';$('friendList').innerHTML='';$('requestList').innerHTML='';$('chatFriendList').innerHTML='';$('chatMessages').innerHTML='';$('publicChatLog').innerHTML='<div class="social-muted">Sign in to view community chat.</div>';}
+}
+function orbitAuthEmail(username){return username.trim().toLowerCase()+'@login.orbit.invalid';}
+async function signIn(){const username=$('authUsername').value.trim().toLowerCase(),password=$('authPassword').value;if(!username||!password)return socialStatus('authStatus','Enter your username and password.');if(!/^[a-zA-Z0-9_]{3,20}$/.test(username))return socialStatus('authStatus','Username must be 3–20 letters, numbers, or underscores.');socialStatus('authStatus','Signing in...');const {error}=await orbitSupabase.auth.signInWithPassword({email:orbitAuthEmail(username),password});socialStatus('authStatus',error?'Username or password is incorrect.':'Signed in!');if(!error)await refreshSocial();}
+async function signUp(){const username=$('authUsername').value.trim().toLowerCase(),password=$('authPassword').value;if(!username||!password)return socialStatus('authStatus','Choose a username and password.');if(password.length<6)return socialStatus('authStatus','Password must be at least 6 characters.');if(!/^[a-zA-Z0-9_]{3,20}$/.test(username))return socialStatus('authStatus','Username must be 3–20 letters, numbers, or underscores.');socialStatus('authStatus','Creating account...');const {data,error}=await orbitSupabase.auth.signUp({email:orbitAuthEmail(username),password,options:{data:{username,display_name:username}}});if(error){socialStatus('authStatus',error.message.includes('already')?'That username may already be taken. Try signing in or choose another.':error.message);return;}if(data.session){socialStatus('authStatus','Account created! Welcome to ORBIT.');await refreshSocial();}else{socialStatus('authStatus','Account created, but email confirmation is enabled. Turn OFF Confirm email in Supabase Authentication settings, then try again.');}}
+$('signInBtn').addEventListener('click',signIn);$('signUpBtn').addEventListener('click',signUp);$('signOutBtn').addEventListener('click',async()=>{await orbitSupabase.auth.signOut();activeChatFriend=null;if(chatSubscription)orbitSupabase.removeChannel(chatSubscription);await refreshSocial();});
+orbitSupabase.auth.onAuthStateChange(()=>{setTimeout(refreshSocial,0)});
+async function loadFriends(){
+ if(!orbitUser)return;const {data:rows,error}=await orbitSupabase.from('friend_requests').select('*').eq('status','accepted').or(`sender_id.eq.${orbitUser.id},receiver_id.eq.${orbitUser.id}`);if(error){socialStatus('friendSearchStatus','Friend requests could not load: '+error.message+' Run the ORBIT Friends + Private Chat SQL setup.');return;}
+ const ids=[...new Set((rows||[]).map(r=>r.sender_id===orbitUser.id?r.receiver_id:r.sender_id))];let profiles=[];if(ids.length){const result=await orbitSupabase.from('profiles').select('id,username').in('id',ids);profiles=result.data||[];}
+ const enriched=await Promise.all(profiles.map(async p=>({...p,identity:await getIdentity(p.id)})));
+ $('friendList').innerHTML=enriched.length?enriched.map(p=>`<div class="social-item"><span>${identityMarkup(p.identity)}${userToolsHtml(p.id,p.username)}</span><button class="social-btn" onclick="openChat('${safeText(p.id)}','${safeText(p.username)}')">Message</button></div>`).join(''):'<div class="social-muted">No friends yet. Search for a username to add someone.</div>';
+ $('chatFriendList').innerHTML=enriched.map(p=>`<button class="social-btn" onclick="openChat('${safeText(p.id)}','${safeText(p.username)}')">@${safeText(p.username)}</button>`).join('')||'<div class="social-muted">Add a friend to start chatting.</div>';
+ const {data:reqs}=await orbitSupabase.from('friend_requests').select('id,sender_id,receiver_id,status').eq('status','pending').eq('receiver_id',orbitUser.id);let senders=[];if(reqs?.length){const r=await orbitSupabase.from('profiles').select('id,username').in('id',reqs.map(x=>x.sender_id));senders=r.data||[];}
+ $('requestList').innerHTML=reqs?.length?reqs.map(req=>{const p=senders.find(x=>x.id===req.sender_id);return `<div class="social-item"><span>@${safeText(p?.username||'Player')}</span><span><button class="social-btn primary" onclick="respondRequest('${safeText(req.id)}','accepted')">Accept</button> <button class="social-btn" onclick="respondRequest('${safeText(req.id)}','rejected')">Decline</button></span></div>`}).join(''):'<div class="social-muted">No incoming requests.</div>';
+}
+$('friendSearchForm').addEventListener('submit',async e=>{e.preventDefault();const name=$('friendSearchInput').value.trim();$('friendSearchResults').innerHTML='';if(!name)return;socialStatus('friendSearchStatus','Searching...');const {data,error}=await orbitSupabase.from('profiles').select('id,username').ilike('username',name).limit(10);if(error)return socialStatus('friendSearchStatus',error.message);const found=(data||[]).filter(p=>p.id!==orbitUser.id);socialStatus('friendSearchStatus',found.length?'Select a player to send a request.':'No matching player found.');const html=await Promise.all(found.map(async p=>{const identity=await getIdentity(p.id);return `<div class="social-item"><span>${identityMarkup(identity)}${userToolsHtml(p.id,p.username)}</span><button class="social-btn primary" onclick="sendFriendRequest('${safeText(p.id)}')">Add friend</button></div>`;}));$('friendSearchResults').innerHTML=html.join('');});
+async function sendFriendRequest(id){if(!orbitUser)return socialStatus('friendSearchStatus','Sign in first.');const {error}=await orbitSupabase.from('friend_requests').insert({sender_id:orbitUser.id,receiver_id:id});socialStatus('friendSearchStatus',error?(error.code==='23505'?'A request already exists.':'Could not send friend request: '+error.message):'Friend request sent!');if(!error)await loadFriends();}
+async function respondRequest(id,status){const {error}=await orbitSupabase.from('friend_requests').update({status}).eq('id',id).eq('receiver_id',orbitUser.id).eq('status','pending');if(error)socialStatus('friendSearchStatus','Could not update request: '+error.message);else socialStatus('friendSearchStatus',status==='accepted'?'Friend request accepted!':'Friend request declined.');await loadFriends();}
+async function openChat(id,username){
+ showPage('chat');activeChatFriend={id,username};const identity=await getIdentity(id);$('chatHeading').innerHTML='Chatting with '+identityMarkup(identity);$('messageInput').disabled=false;$('sendMessageBtn').disabled=false;await loadMessages();
+ if(chatSubscription)orbitSupabase.removeChannel(chatSubscription);
+ chatSubscription=orbitSupabase.channel('orbit-chat-'+[orbitUser.id,id].sort().join('-'))
+  .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages'},payload=>{
+   const m=payload.new;
+   if((m.sender_id===orbitUser.id&&m.receiver_id===id)||(m.sender_id===id&&m.receiver_id===orbitUser.id))appendMessage(m);
+  })
+  .on('postgres_changes',{event:'DELETE',schema:'public',table:'messages'},payload=>{
+   const deletedId=payload.old?.id;
+   if(!deletedId)return;
+   const item=$('chatMessages').querySelector(`[data-private-message-id="${CSS.escape(deletedId)}"]`);
+   if(item)item.remove();
+  })
+  .subscribe(status=>{
+   if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')socialStatus('chatStatus','Chat is loaded, but live updates are unavailable. Check Supabase Realtime for the messages table.');
+  });
+}
+async function appendMessage(m){if($('chatMessages').querySelector(`[data-private-message-id="${CSS.escape(m.id)}"]`))return;const identity=await getIdentity(m.sender_id);const el=document.createElement('div');el.className='chat-bubble'+(m.sender_id===orbitUser.id?' mine':'');el.dataset.privateMessageId=m.id;const sender=document.createElement('div');sender.innerHTML=identityMarkup(identity)+(canModerate()?` <button class="social-btn" style="padding:2px 6px;font-size:9px" onclick="deletePrivateMessage('${safeText(m.id)}')">Delete</button>`:'');const body=document.createElement('div');body.textContent=m.body;const time=document.createElement('small');time.textContent=new Date(m.created_at).toLocaleString();el.append(sender,body,time);$('chatMessages').appendChild(el);$('chatMessages').scrollTop=$('chatMessages').scrollHeight;}
+async function loadMessages(){if(!activeChatFriend)return;$('chatMessages').innerHTML='';const id=activeChatFriend.id;const {data,error}=await orbitSupabase.from('messages').select('*').or(`and(sender_id.eq.${orbitUser.id},receiver_id.eq.${id}),and(sender_id.eq.${id},receiver_id.eq.${orbitUser.id})`).order('created_at',{ascending:true}).limit(100);if(error){socialStatus('chatStatus',error.message);return;}for(const m of data||[])await appendMessage(m);}
+$('sendMessageForm').addEventListener('submit',async e=>{e.preventDefault();if(!activeChatFriend||!orbitUser)return;const body=$('messageInput').value.trim();if(!body)return;$('sendMessageBtn').disabled=true;socialStatus('chatStatus','Checking your message...');try{const {data,error}=await orbitSupabase.functions.invoke('moderate-global-chat',{body:{message:body,receiver_id:activeChatFriend.id}});if(error){let message=error.message||'The moderation service could not be reached.';try{const context=error.context;if(context&&typeof context.json==='function'){const details=await context.json();if(details?.error)message=details.error;}}catch(_){}socialStatus('chatStatus',message+' Your message was not sent.');}else if(!data?.ok){socialStatus('chatStatus',(data?.error||'Your message was blocked.')+' It was not sent.');}else{$('messageInput').value='';socialStatus('chatStatus','Message sent.');}}catch(error){socialStatus('chatStatus',(error?.message||'Something went wrong.')+' Your message was not sent.');}finally{$('sendMessageBtn').disabled=false;}});
+function appendPublicChatMessage(row,identity){const log=$('publicChatLog');if(log.querySelector('.social-muted'))log.innerHTML='';if(log.querySelector(`[data-message-id="${CSS.escape(row.id)}"]`))return;const item=document.createElement('div');item.className='public-chat-line';item.dataset.messageId=row.id;const head=document.createElement('strong');head.innerHTML=identityMarkup(identity)+userToolsHtml(row.sender_id,identity.username,true,row.id);const body=document.createElement('span');body.textContent=' '+row.body;const time=document.createElement('small');time.textContent=new Date(row.created_at).toLocaleTimeString();item.append(head,body,time);log.appendChild(item);while(log.children.length>100)log.removeChild(log.firstChild);log.scrollTop=log.scrollHeight;}
+async function renderPublicChatRow(row){const identity=await getIdentity(row.sender_id);appendPublicChatMessage(row,identity);}
+async function loadGlobalChat(){if(!orbitUser)return;const log=$('publicChatLog');log.innerHTML='<div class="social-muted">Loading community messages...</div>';const {data,error}=await orbitSupabase.from('global_chat_messages').select('id,sender_id,body,created_at').order('created_at',{ascending:false}).limit(80);if(error){log.textContent='Global chat could not load. Check the setup details below.';socialStatus('publicChatStatus','Supabase error: '+error.message+' (code: '+(error.code||'unknown')+'). Run the latest ORBIT global-chat SQL setup in the correct Supabase project.');return;}log.innerHTML='';for(const row of (data||[]).reverse())await renderPublicChatRow(row);if(!data?.length)log.innerHTML='<div class="social-muted">No messages yet. Start the conversation!</div>';if(publicChatSubscription)orbitSupabase.removeChannel(publicChatSubscription);
+ publicChatSubscription=orbitSupabase.channel('orbit-global-public-chat')
+  .on('postgres_changes',{event:'INSERT',schema:'public',table:'global_chat_messages'},payload=>renderPublicChatRow(payload.new))
+  .on('postgres_changes',{event:'DELETE',schema:'public',table:'global_chat_messages'},payload=>{
+   const deletedId=payload.old?.id;
+   if(!deletedId)return;
+   const item=log.querySelector(`[data-message-id="${CSS.escape(deletedId)}"]`);
+   if(item)item.remove();
+   if(!log.children.length)log.innerHTML='<div class="social-muted">No messages yet. Start the conversation!</div>';
+  })
+  .subscribe(status=>{if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')socialStatus('publicChatStatus','Messages load, but live updates are unavailable. Check that global_chat_messages is enabled in Supabase Realtime.');});
+}
+async function runGlobalChatCommand(raw){
+ const parts=raw.trim().split(/\s+/);const command=(parts[0]||'').toLowerCase();
+ if(!['/mute','/unmute','/purge'].includes(command))return false;
+ if(!canModerate()){socialStatus('publicChatStatus','Only ORBIT administrators and the owner can use moderation commands.');return true;}
+ if(command==='/purge'){
+  const amount=parts[1]===undefined?50:Number(parts[1]);
+  if(!Number.isInteger(amount)||amount<1||amount>100){socialStatus('publicChatStatus','Usage: /purge [1-100]');return true;}
+  if(!confirm(`Delete the ${amount} most recent global chat message(s)? This affects everyone.`))return true;
+  const {data,error}=await orbitSupabase.rpc('orbit_purge_global_chat',{message_count:amount});
+  if(error){socialStatus('publicChatStatus','Purge failed: '+error.message+' Make sure the ORBIT moderation SQL has been installed.');return true;}
+  await loadGlobalChat();socialStatus('publicChatStatus',`Purge complete. Deleted ${Number(data)||0} message(s).`);return true;
+ }
+ const username=(parts[1]||'').replace(/^@/,'').toLowerCase();
+ if(!username){socialStatus('publicChatStatus',command==='/mute'?'Usage: /mute @username [minutes] [reason]':'Usage: /unmute @username');return true;}
+ const {data:profile,error:profileError}=await orbitSupabase.from('profiles').select('id,username').ilike('username',username).maybeSingle();
+ if(profileError||!profile){socialStatus('publicChatStatus','Could not find that username. Check the spelling and try again.');return true;}
+ if(profile.id===orbitUser.id){socialStatus('publicChatStatus','You cannot mute yourself.');return true;}
+ if(command==='/mute'){
+  const minutes=parts[2]===undefined?10:Number(parts[2]);
+  if(!Number.isInteger(minutes)||minutes<1||minutes>10080){socialStatus('publicChatStatus','Mute duration must be 1-10080 minutes. Usage: /mute @username [minutes] [reason]');return true;}
+  const reason=parts.slice(3).join(' ').slice(0,200)||'No reason provided';
+  const {error}=await orbitSupabase.rpc('orbit_mute_user',{target_user_id:profile.id,duration_minutes:minutes,mute_reason:reason});
+  if(error){socialStatus('publicChatStatus','Mute failed: '+error.message);return true;}
+  socialStatus('publicChatStatus',`@${profile.username} has been muted for ${minutes} minute(s).`);return true;
+ }
+ const {error}=await orbitSupabase.rpc('orbit_unmute_user',{target_user_id:profile.id});
+ if(error){socialStatus('publicChatStatus','Unmute failed: '+error.message);return true;}
+ socialStatus('publicChatStatus',`@${profile.username} has been unmuted.`);return true;
+}
+$('publicChatForm').addEventListener('submit',async e=>{e.preventDefault();if(!orbitUser)return;const body=$('publicChatInput').value.trim();if(!body)return;$('publicChatSend').disabled=true;try{if(/^\/(mute|unmute|purge)(\s|$)/i.test(body)){const handled=await runGlobalChatCommand(body);if(handled)$('publicChatInput').value='';return;}socialStatus('publicChatStatus','Checking your message...');const {data,error}=await orbitSupabase.functions.invoke('moderate-global-chat',{body:{message:body}});if(error){let message=error.message||'The moderation service could not be reached.';try{const context=error.context;if(context&&typeof context.json==='function'){const details=await context.json();if(details?.error)message=details.error;}}catch(_){}socialStatus('publicChatStatus',message+' Your message was not sent.');}else if(!data?.ok){socialStatus('publicChatStatus',(data?.error||'Your message was blocked.')+' It was not published.');}else{$('publicChatInput').value='';socialStatus('publicChatStatus','Message sent!');}}catch(error){socialStatus('publicChatStatus',(error?.message||'Something went wrong.')+' Your message was not sent.');}finally{$('publicChatSend').disabled=false;}});
+// Keep three-dot menus above scrollable chat panels instead of letting overflow clip them.
+document.addEventListener('toggle',event=>{const details=event.target;if(!details.matches?.('.user-tools'))return;if(details.open){const summary=details.querySelector('summary'),menu=details.querySelector('.user-tools-menu');if(!summary||!menu)return;const r=summary.getBoundingClientRect();menu.style.left=Math.max(12,Math.min(r.right-menu.offsetWidth,window.innerWidth-menu.offsetWidth-12))+'px';const below=r.bottom+6;menu.style.top=(below+menu.offsetHeight>window.innerHeight?Math.max(12,r.top-menu.offsetHeight-6):below)+'px';}},true);
+window.addEventListener('resize',()=>document.querySelectorAll('.user-tools[open]').forEach(d=>{const summary=d.querySelector('summary'),menu=d.querySelector('.user-tools-menu');if(!summary||!menu)return;const r=summary.getBoundingClientRect();menu.style.left=Math.max(12,Math.min(r.right-menu.offsetWidth,window.innerWidth-menu.offsetWidth-12))+'px';menu.style.top=Math.min(r.bottom+6,window.innerHeight-menu.offsetHeight-12)+'px';}));
+async function fullscreenMinecraft(){const el=document.getElementById('minecraftFrameWrap');if(el.requestFullscreen)await el.requestFullscreen();}
+
+/* 2048 GAME LOGIC */
+let board2048=[],score2048=0,best2048=0,gameOver2048=false,won2048=false;
+try{best2048=Number(localStorage.getItem('orbit2048Best'))||0}catch(e){}
+function reset2048(){
+ board2048=Array(16).fill(0);score2048=0;gameOver2048=false;won2048=false;
+ addTile2048();addTile2048();render2048();
+ $('message2048').textContent='Use your arrow keys or swipe to move.';
+}
+function addTile2048(){
+ const empty=board2048.map((v,i)=>v===0?i:-1).filter(i=>i!==-1);
+ if(!empty.length)return;
+ const index=empty[Math.floor(Math.random()*empty.length)];
+ board2048[index]=Math.random()<.9?2:4;
+}
+function render2048(){
+ const board=$('board2048');if(!board)return;
+ board.innerHTML=board2048.map(v=>`<div class="tile2048" data-value="${v}">${v||''}</div>`).join('');
+ $('score2048').textContent=score2048;
+ $('best2048').textContent=best2048;
+}
+function move2048(direction){
+ if(gameOver2048)return;
+ const before=board2048.slice();let gained=0;
+ for(let line=0;line<4;line++){
+  let indexes=[];
+  for(let pos=0;pos<4;pos++){
+   let r=direction==='up'?pos:direction==='down'?3-pos:line;
+   let c=direction==='left'?pos:direction==='right'?3-pos:line;
+   if(direction==='up'||direction==='down')c=line;
+   else r=line;
+   indexes.push(r*4+c);
+  }
+  let values=indexes.map(i=>board2048[i]).filter(v=>v!==0);
+  for(let i=0;i<values.length-1;i++){
+   if(values[i]===values[i+1]){
+    values[i]*=2;gained+=values[i];values.splice(i+1,1);
+    if(values[i]===2048)won2048=true;
+   }
+  }
+  while(values.length<4)values.push(0);
+  indexes.forEach((index,i)=>board2048[index]=values[i]);
+ }
+ if(board2048.some((v,i)=>v!==before[i])){
+  score2048+=gained;addTile2048();
+  if(score2048>best2048){best2048=score2048;try{localStorage.setItem('orbit2048Best',best2048)}catch(e){}}
+  if(won2048)$('message2048').textContent='You made 2048! Keep going or start a new game.';
+  else $('message2048').textContent='Nice move!';
+  if(!canMove2048()){gameOver2048=true;$('message2048').textContent='Game over! Press New game to try again.';}
+  render2048();
+ }
+}
+function canMove2048(){
+ if(board2048.includes(0))return true;
+ for(let r=0;r<4;r++)for(let c=0;c<4;c++){
+  const i=r*4+c;
+  if(c<3&&board2048[i]===board2048[i+1])return true;
+  if(r<3&&board2048[i]===board2048[i+4])return true;
+ }
+ return false;
+}
+document.addEventListener('keydown',e=>{
+ if(!document.getElementById('page-2048')?.classList.contains('active'))return;
+ const keys={ArrowUp:'up',w:'up',ArrowDown:'down',s:'down',ArrowLeft:'left',a:'left',ArrowRight:'right',d:'right'};
+ if(keys[e.key]){e.preventDefault();move2048(keys[e.key]);}
+});
+let touch2048=null;
+$('board2048').addEventListener('touchstart',e=>{const t=e.changedTouches[0];touch2048={x:t.clientX,y:t.clientY}},{passive:true});
+$('board2048').addEventListener('touchend',e=>{
+ if(!touch2048)return;const t=e.changedTouches[0],dx=t.clientX-touch2048.x,dy=t.clientY-touch2048.y;
+ if(Math.max(Math.abs(dx),Math.abs(dy))>25)move2048(Math.abs(dx)>Math.abs(dy)?(dx>0?'right':'left'):(dy>0?'down':'up'));
+ touch2048=null;
+},{passive:true});
+
+/* SLOPE GAME LOGIC */
+const slopeCanvas=$('slopeCanvas'),slopeCtx=slopeCanvas.getContext('2d');
+let slopeRunning=false,slopeOver=false,slopeFrame=0,slopeScore=0,slopeBest=0,slopeBallX=0,slopeVelocity=0,slopeSpeed=5,slopeObstacles=[],slopeLastTime=0,slopeAnimation=0;
+try{slopeBest=Number(localStorage.getItem('orbitSlopeBest'))||0}catch(e){}
+$('slopeBest').textContent=slopeBest;
+function slopeReset(){
+ slopeRunning=false;slopeOver=false;slopeFrame=0;slopeScore=0;slopeBallX=0;slopeVelocity=0;slopeSpeed=5;slopeObstacles=[];slopeLastTime=0;
+ $('slopeScore').textContent='0';
+ drawSlope();
+}
+function startSlope(){
+ if(slopeAnimation)cancelAnimationFrame(slopeAnimation);
+ slopeReset();slopeRunning=true;
+ $('slopeOverlay').style.display='none';
+ slopeAnimation=requestAnimationFrame(slopeLoop);
+}
+function endSlope(){
+ slopeRunning=false;slopeOver=true;
+ if(slopeScore>slopeBest){slopeBest=slopeScore;try{localStorage.setItem('orbitSlopeBest',slopeBest)}catch(e){}}
+ $('slopeBest').textContent=slopeBest;
+ $('slopeOverlayTitle').textContent='GAME OVER';
+ $('slopeOverlayDescription').textContent='You scored '+slopeScore+'. Best: '+slopeBest+'.';
+ $('slopeStartButton').textContent='PLAY AGAIN';
+ $('slopeOverlay').style.display='flex';
+}
+function slopeInput(direction){
+ if(!slopeRunning)return;
+ slopeVelocity=direction*0.85;
+}
+function slopeLoop(time){
+ if(!slopeRunning)return;
+ const dt=Math.min((time-(slopeLastTime||time))/16.67,2.5);slopeLastTime=time;
+ slopeFrame+=dt;slopeScore=Math.floor(slopeFrame/5);
+ slopeSpeed=Math.min(5+slopeFrame/600,13);
+ $('slopeScore').textContent=slopeScore;
+ slopeVelocity*=Math.pow(.88,dt);
+ slopeBallX+=slopeVelocity*dt;
+ if(slopeBallX<-1.12||slopeBallX>1.12){endSlope();drawSlope();return;}
+ if(Math.random()<.025*dt){
+  const lane=Math.random()*1.65-.825;
+  slopeObstacles.push({x:lane,y:1.2,size:.11+Math.random()*.035});
+ }
+ slopeObstacles.forEach(o=>o.y-=.014*slopeSpeed*dt);
+ slopeObstacles=slopeObstacles.filter(o=>o.y>-.2);
+ for(const o of slopeObstacles){
+  if(o.y<.16&&o.y>-.02&&Math.abs(o.x-slopeBallX)<o.size+.09){endSlope();drawSlope();return;}
+ }
+ drawSlope();slopeAnimation=requestAnimationFrame(slopeLoop);
+}
+function drawSlope(){
+ const ctx=slopeCtx,w=slopeCanvas.width,h=slopeCanvas.height;
+ ctx.clearRect(0,0,w,h);
+ const bg=ctx.createLinearGradient(0,0,0,h);bg.addColorStop(0,'#07101f');bg.addColorStop(1,'#142d49');ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+ // Stars
+ for(let i=0;i<65;i++){const x=(i*137)%w,y=(i*71)%h;ctx.fillStyle='rgba(210,235,255,.45)';ctx.fillRect(x,y,2,2);}
+ // Perspective track
+ const horizon={x:w/2,y:h*.18},bottomLeft={x:w*.08,y:h},bottomRight={x:w*.92,y:h};
+ ctx.beginPath();ctx.moveTo(horizon.x-35,horizon.y);ctx.lineTo(bottomLeft.x,bottomLeft.y);ctx.lineTo(bottomRight.x,bottomRight.y);ctx.lineTo(horizon.x+35,horizon.y);ctx.closePath();
+ const road=ctx.createLinearGradient(0,h*.2,0,h);road.addColorStop(0,'#1b3047');road.addColorStop(1,'#294967');ctx.fillStyle=road;ctx.fill();
+ ctx.strokeStyle='#4b83a8';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(horizon.x-35,horizon.y);ctx.lineTo(bottomLeft.x,bottomLeft.y);ctx.moveTo(horizon.x+35,horizon.y);ctx.lineTo(bottomRight.x,bottomRight.y);ctx.stroke();
+ // Moving track grid
+ for(let i=0;i<12;i++){
+  const p=((i/12+(slopeFrame*.012)%1)%1);
+  const y=h*.18+Math.pow(p,1.7)*h*.82;
+  const half=35+p*385;
+  ctx.strokeStyle=`rgba(120,190,230,${.08+p*.2})`;ctx.lineWidth=1+p*2;
+  ctx.beginPath();ctx.moveTo(w/2-half,y);ctx.lineTo(w/2+half,y);ctx.stroke();
+ }
+ // Side glow lines
+ ctx.strokeStyle='#54b8e9';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(w/2-35,h*.18);ctx.lineTo(w*.08,h);ctx.moveTo(w/2+35,h*.18);ctx.lineTo(w*.92,h);ctx.stroke();
+ // Obstacles
+ slopeObstacles.forEach(o=>{
+  const p=Math.max(0,Math.min(1,(1.2-o.y)/1.2));
+  const y=h*.18+p*h*.82;const half=35+p*385;
+  const x=w/2+o.x*half*.8;const size=10+p*34;
+  ctx.save();ctx.translate(x,y);ctx.fillStyle='#fa3e55';ctx.shadowColor='#ff234e';ctx.shadowBlur=15;
+  ctx.beginPath();ctx.moveTo(-size,-size*.65);ctx.lineTo(size,-size*.65);ctx.lineTo(size*1.2,size*.65);ctx.lineTo(-size*1.2,size*.65);ctx.closePath();ctx.fill();
+  ctx.restore();
+ });
+ // Player ball
+ const bx=w/2+slopeBallX*300,by=h*.79,br=19;
+ ctx.save();ctx.shadowColor='#62f3b5';ctx.shadowBlur=25;
+ const ball=ctx.createRadialGradient(bx-br*.4,by-br*.5,2,bx,by,br);
+ ball.addColorStop(0,'#e0fff2');ball.addColorStop(.35,'#65f0b4');ball.addColorStop(1,'#159b72');
+ ctx.fillStyle=ball;ctx.beginPath();ctx.arc(bx,by,br,0,Math.PI*2);ctx.fill();
+ ctx.restore();
+ // Ball shadow
+ ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(bx,by+br+5,br*1.2,6,0,0,Math.PI*2);ctx.fill();
+ if(!slopeRunning&&!slopeOver){
+  ctx.fillStyle='rgba(0,0,0,.12)';ctx.fillRect(0,0,w,h);
+ }
+}
+document.addEventListener('keydown',e=>{
+ if(!$('page-slope').classList.contains('active'))return;
+ if(['ArrowLeft','ArrowRight','a','d','A','D'].includes(e.key)){
+  e.preventDefault();slopeInput(e.key==='ArrowLeft'||e.key.toLowerCase()==='a'?-1:1);
+ }
+});
+document.addEventListener('keyup',e=>{
+ if(['ArrowLeft','ArrowRight','a','d','A','D'].includes(e.key))slopeVelocity*=.35;
+});
+let slopeTouchSide=0;
+slopeCanvas.addEventListener('pointerdown',e=>{
+ if(!slopeRunning)return;
+ const rect=slopeCanvas.getBoundingClientRect();slopeTouchSide=e.clientX<rect.left+rect.width/2?-1:1;slopeInput(slopeTouchSide);
+});
+slopeCanvas.addEventListener('pointermove',e=>{
+ if(!slopeRunning||e.buttons===0)return;
+ const rect=slopeCanvas.getBoundingClientRect();slopeInput(e.clientX<rect.left+rect.width/2?-1:1);
+});
+slopeCanvas.addEventListener('pointerup',()=>{slopeVelocity*=.35});
+slopeCanvas.addEventListener('pointercancel',()=>{slopeVelocity*=.35});
+function open2048(){showPage('2048');reset2048();document.getElementById('topbarTitle').textContent='2048';}
+function openSlope(){showPage('slope');slopeReset();$('slopeOverlay').style.display='flex';$('slopeOverlayTitle').textContent='SLOPE';$('slopeOverlayDescription').textContent="Avoid the red obstacles. Don't fall off!";$('slopeStartButton').textContent='PLAY NOW';document.getElementById('topbarTitle').textContent='Slope';}
+window.open2048=open2048;
+window.openSlope=openSlope;
+window.reset2048=reset2048;
+window.startSlope=startSlope;
+
+window.sendFriendRequest=sendFriendRequest;
+window.respondRequest=respondRequest;
+window.openChat=openChat;
+window.fullscreenMinecraft=fullscreenMinecraft;
+window.setMemberRole=setMemberRole;
+window.deleteGlobalMessage=deleteGlobalMessage;
+window.deletePrivateMessage=deletePrivateMessage;
+window.openMinecraft=openMinecraft;
+
+const OrbitSoftware=document.getElementById("OrbitSoftware");const orbit=document.getElementById("orbit");let isOrbit=false,lastSemicolon=0,isTransitioning=false;
+refreshSocial().catch(err=>socialStatus("authStatus",err.message));
+function toggleOrbit(){if(isTransitioning)return;isTransitioning=true;const current=isOrbit?orbit:OrbitSoftware;const next=isOrbit?OrbitSoftware:orbit;current.classList.add("glitching");setTimeout(()=>{current.style.display="none";current.classList.remove("glitching");next.style.display="block";next.style.opacity="0";next.classList.add("glitching");requestAnimationFrame(()=>{next.style.opacity="1"});setTimeout(()=>{next.classList.remove("glitching");isOrbit=!isOrbit;isTransitioning=false;document.title=isOrbit?"ORBIT":"OrbitSoftware";},550);},300);}
+document.addEventListener("keydown",event=>{if(event.target.matches("input,textarea,select")||event.ctrlKey||event.altKey||event.metaKey)return;if(event.key===";"){const now=Date.now();if(now-lastSemicolon<800){lastSemicolon=0;toggleOrbit()}else lastSemicolon=now;}});
+const sidebar=document.getElementById("sidebar");document.getElementById("collapseBtn").addEventListener("click",()=>{if(window.innerWidth<=650){sidebar.classList.remove("mobile-open");return}sidebar.classList.toggle("collapsed");});document.getElementById("mobileMenu").addEventListener("click",()=>sidebar.classList.toggle("mobile-open"));
+
+const pageTitles={
+  home:"Home",
+  games:"Games",
+  minecraft:"Minecraft",
+  "2048":"2048",
+  slope:"Slope",
+  friends:"Friends",
+  chat:"Chat"
+};
+function showPage(name){if(!pageTitles[name])return;document.querySelectorAll(".page").forEach(page=>page.classList.toggle("active",page.id==="page-"+name));document.querySelectorAll(".nav-item").forEach(button=>button.classList.toggle("active",button.dataset.page===name));document.getElementById("topbarTitle").textContent=pageTitles[name];sidebar.classList.remove("mobile-open");if(name!=="games"){const search=document.getElementById("search");if(search){search.value="";filterGames("");}}}
+document.querySelectorAll(".nav-item").forEach(button=>button.addEventListener("click",()=>showPage(button.dataset.page)));document.querySelectorAll("[data-go]").forEach(button=>button.addEventListener("click",()=>showPage(button.dataset.go)));
+function openMinecraft(){showPage("minecraft");document.getElementById("topbarTitle").textContent="Minecraft";const frame=document.getElementById("minecraftFrame");if(!frame.src)frame.src="eaglercraft/index.html";}
+const search=document.getElementById("search");const cards=[...document.querySelectorAll("#gameGrid .game-card")];const noResults=document.getElementById("noResults");function filterGames(query){let visible=0;cards.forEach(card=>{const match=card.dataset.name.includes(query.toLowerCase().trim());card.style.display=match?"":"none";if(match)visible++;});noResults.style.display=visible===0?"block":"none";}search.addEventListener("input",()=>filterGames(search.value));
+
+/* Initialize the two new games */
+reset2048();
+drawSlope();
+</script>
+</body>
+</html>
